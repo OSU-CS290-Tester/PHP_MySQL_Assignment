@@ -69,19 +69,35 @@ if ( (isset($_POST['name'])) && ($_POST['name'] != null)){
 }
 echo "
 <fieldset>
-	<legend>Add Videos</legend>
-	<form action = 'videos.php' method = 'POST'>
-		<pre>
-		 Video Name : <input type = 'text' name = 'name' > <br> 
-		 <br> 
-		 Video Category : <input type = 'text' name = 'category' > <br> 
-		 <br> 
-		 Length in minutes : <input type = 'text' name = 'length' size = '20' > <br> 
-		 <br> 
-		 <input type ='submit' value ='Add Video' >
-		</pre>
-	</form>
-</fieldset>";
+<legend>Add Videos</legend>
+<form action = 'videos.php' method = 'POST'>
+<pre>
+Video Name : <input type = 'text' name = 'name' > <br> 
+
+Video Category : <input type = 'text' name = 'category' > <br> 
+
+Length in minutes : <input type = 'text' name = 'length' size = '20' > <br> 
+
+<input type ='submit' value ='Add Video' >
+</pre>
+</form>
+<br>";
+echo '
+<p>Please select a Category to display</p>
+<form action = "videos.php" method = "POST">
+<select name = "Filter">
+	<option value = "All" selected="selected">All Categories</option>
+	<option value = "Comedy" >Comedy</option>
+	<option value = "Family" >Family</option>
+	<option value = "Fiction" >Fiction</option>
+	<option value = "Action" >Action</option>
+	<option value = "Drama" >Drama</option>
+</select>
+	<input type=submit value = "Filter" >
+</form>
+</fieldset>';
+
+if (isset($_REQUEST['Filter'])){
 
 	$query = "SELECT * FROM Inventory";
 	$result	= $mysqli->query($query);
@@ -145,9 +161,14 @@ echo "
 	echo "
 	</table>
 	</div>";
-
+	
 	$result->close();
 	$mysqli->close();
+
+	} else {
+		echo "ALL CAT not selected !";
+		echo $_REQUEST['All'];
+	}
 
 	function get_post($mysqli , $var){
 		return $mysqli->real_escape_string($_POST[$var]);
