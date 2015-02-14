@@ -22,7 +22,24 @@ if (isset($_POST['delete']) && isset($_POST['id'])){
 
 if (isset($_POST['switch']) && isset($_POST['id'])){
 	$id = get_post($mysqli , 'id');
-	$query = "UPDATE Inventory SET rented = TRUE WHERE id='$id'" ;
+	$query = "SELECT rented FROM Inventory WHERE id='$id'";
+	$result	= $mysqli->query($query);
+	if (!$result) {
+		die ("Database access failed: " . $mysqli->error);
+	}
+	$row = $result->num_rows;
+	$result ->data_seek(0);
+	$row = $result->fetch_array(MYSQLI_NUM);
+	echo "$row[0]" . "  <br>" ;
+	if ($row[0] === '0'){
+
+		$query = "UPDATE Inventory SET rented = TRUE WHERE id='$id'" ;
+
+	}else{
+
+		$query = "UPDATE Inventory SET rented = FALSE WHERE id='$id'" ;
+	}
+
 	$result = $mysqli->query($query);
 	if (!$result) {
 		echo "Update failed : " . $mysqli->error . "<br><br>";
