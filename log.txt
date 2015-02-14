@@ -1,0 +1,18 @@
+You log goes in this  file.
+
+Start: Thursday, 12 Feb 2015 13:00:00 -0800
+End: Thursday, 12 Feb Feb 2015 18:00:00 -0800
+Tasks: Watch lectures and read about MySQL, read about php and MySQL.
+
+Start: Thursday, 12 Feb 2015 20:00:00 -0800
+End: Thursday, 12 Feb Feb 2015 22:30:00 -0800
+Tasks: Created videos.php file and implemented the interface web page to start with. Also created a design to what the page should do and what the outcome should be.
+
+Start: Friday, 13 Feb 2015 16:00:00 -0800
+End: Friday, 13 Feb Feb 2015 20:00:00 -0800
+Tasks: Created a table on the OSU database, start to connect successfully to the database.
+
+Start: Saturday, 14 Feb 2015 9:00:00 -0800
+End: Saturday, 14 Feb Feb 2015 13:00:00 -0800
+Tasks: Worked on videos.pho and start Inserting values and deleting values from the table on the data base.
+
