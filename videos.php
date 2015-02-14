@@ -8,7 +8,7 @@ $mysqli = new mysqli("oniddb.cws.oregonstate.edu", "thalijw-db" , $password , "t
 if ($mysqli->connect_errno) {
 	echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error; 
 } else {
-	echo "Connection is seccussful<br><br>";
+	echo "Connection is successful<br><br>";
 	}
 
 if (isset($_POST['delete']) && isset($_POST['id'])){
@@ -77,13 +77,13 @@ Video Name : <input type = 'text' name = 'name' > <br>
 Video Category : <input type = 'text' name = 'category' > <br> 
 
 Length in minutes : <input type = 'text' name = 'length' size = '20' > <br> 
-
+<input type='hidden' name = 'Filter' value='All'>
 <input type ='submit' value ='Add Video' >
 </pre>
 </form>
 <br>";
 
-if (isset($_REQUEST['Filter'])){
+/*if (isset($_REQUEST['Filter'])){
 
 	$query = "SELECT category FROM Inventory ";
 	$result	= $mysqli->query($query);
@@ -104,17 +104,37 @@ if (isset($_REQUEST['Filter'])){
 	}
 
 	$FilterArr = array_unique($CatArray);
+}*/
+$query = "SELECT category FROM Inventory ";
+$result	= $mysqli->query($query);
+if (!$result) {
+		die ("Database access failed: " . $mysqli->error);
 }
+
+$row = $result->num_rows;
+$RowInt = intval($row);
+
+$CatArray[] = '';
+	
+for ($b = $RowInt-1 ; $b >= 0 ; $b--){
+
+		$result->data_seek($b);
+		$row = $result->fetch_array(MYSQLI_NUM);
+		$CatArray[$b] = $row[0];
+}
+
+$FilterArr = array_unique($CatArray);
+
 echo '
 <p>Please select a Category to display</p>
-<form action = "videos.php" method = "GET">
+<form action = "videos.php" method = "POST">
 <select name = "Filter"> ';
 
 foreach($FilterArr as $option){
 	echo "<option value = '$option' name = 'option'";
-	if ($_REQUEST['Filter'] == $option){
+	/*if ($_REQUEST['Filter'] == $option){
 		echo "selected='selected' ";
-	}
+	}*/
 	echo " >$option </option>";
 }
 echo '
@@ -124,7 +144,7 @@ echo '
 </form>
 </fieldset>';
 
-if (isset($_REQUEST['Filter'])) {
+if (isset($_REQUEST['Filter']) ) {
 
 	if ($_REQUEST['Filter'] == 'All'){
 
@@ -173,6 +193,7 @@ if (isset($_REQUEST['Filter'])) {
 			<form action = 'videos.php' method = 'POST'>
 				<input type='hidden' name = 'delete' value = 'yes'>
 				<input type='hidden' name = 'id' value='$row[0]'>
+				<input type='hidden' name = 'Filter' value='All'>
 				<input type='submit' value='Delete Video' >
 			</form>
 		</td>" ;
@@ -181,6 +202,7 @@ if (isset($_REQUEST['Filter'])) {
 			<form action = 'videos.php' method = 'POST'>
 				<input type='hidden' name = 'switch' value = 'yes'>
 				<input type='hidden' name = 'id' value='$row[0]'>
+				<input type='hidden' name = 'Filter' value='All'>
 			<input type='submit' value='checkin / checkout' >
 			</form>
 		</td>" ;
@@ -260,9 +282,67 @@ if (isset($_REQUEST['Filter'])) {
 	$result->close();
 	$mysqli->close();
 
-	} else {
-		echo "ALL CAT not selected !";
-		echo $_REQUEST['All'];
+	}else{
+
+	$query = "SELECT * FROM Inventory ";
+	$result	= $mysqli->query($query);
+	if (!$result) {
+		die ("Database access failed: " . $mysqli->error);
+	}
+
+	$row = $result->num_rows;
+	$RowInt = intval($row);
+		echo "<br><br>
+	<div>
+	<table>
+		<tr> 
+		<th>ID</th>
+		<th>Video Name</th>
+		<th>Category</th>
+		<th>Length</th>
+		<th>Availablity</th>";
+	
+	for($m = $RowInt-1 ; $m >= 0 ; $m--)
+	{
+		echo "<tr>";
+		$result ->data_seek($m);
+		$row = $result->fetch_array(MYSQLI_NUM);
+		for($k = 0 ; $k < 5 ; $k++)
+		{
+			if($k === 4){
+				if($row[$k] === '0'){
+					echo "<td>Available</td>";
+				}else
+					echo "<td>Rented</td>";
+			}
+			else
+				echo "<td>$row[$k]</td>";
+		}
+		echo "
+		<td>
+			<form action = 'videos.php' method = 'POST'>
+				<input type='hidden' name = 'delete' value = 'yes'>
+				<input type='hidden' name = 'id' value='$row[0]'>
+				<input type='hidden' name = 'Filter' value='All'>
+				<input type='submit' value='Delete Video' >
+			</form>
+		</td>" ;
+		echo "
+		<td>
+			<form action = 'videos.php' method = 'POST'>
+				<input type='hidden' name = 'switch' value = 'yes'>
+				<input type='hidden' name = 'id' value='$row[0]'>
+				<input type='hidden' name = 'Filter' value='All'>
+			<input type='submit' value='checkin / checkout' >
+			</form>
+		</td>" ;
+		echo "</tr>";
+
+	}
+	echo "
+	</table>
+	</div>";
+
 	}
 
 	function get_post($mysqli , $var){
