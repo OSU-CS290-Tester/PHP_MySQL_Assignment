@@ -82,24 +82,119 @@ Length in minutes : <input type = 'text' name = 'length' size = '20' > <br>
 </pre>
 </form>
 <br>";
+
+if (isset($_REQUEST['Filter'])){
+
+	$query = "SELECT category FROM Inventory ";
+	$result	= $mysqli->query($query);
+	if (!$result) {
+		die ("Database access failed: " . $mysqli->error);
+	}
+
+	$row = $result->num_rows;
+	$RowInt = intval($row);
+
+	$CatArray[] = '';
+	
+	for ($b = $RowInt-1 ; $b >= 0 ; $b--){
+
+		$result->data_seek($b);
+		$row = $result->fetch_array(MYSQLI_NUM);
+		$CatArray[$b] = $row[0];
+	}
+
+	$FilterArr = array_unique($CatArray);
+}
 echo '
 <p>Please select a Category to display</p>
-<form action = "videos.php" method = "POST">
-<select name = "Filter">
-	<option value = "All" selected="selected">All Categories</option>
-	<option value = "Comedy" >Comedy</option>
-	<option value = "Family" >Family</option>
-	<option value = "Fiction" >Fiction</option>
-	<option value = "Action" >Action</option>
-	<option value = "Drama" >Drama</option>
+<form action = "videos.php" method = "GET">
+<select name = "Filter"> ';
+
+foreach($FilterArr as $option){
+	echo "<option value = '$option' name = 'option'";
+	if ($_REQUEST['Filter'] == $option){
+		echo "selected='selected' ";
+	}
+	echo " >$option </option>";
+}
+echo '
+<option value = "All" selected = "selected" >All Catigories</option>
 </select>
 	<input type=submit value = "Filter" >
 </form>
 </fieldset>';
 
-if (isset($_REQUEST['Filter'])){
+if (isset($_REQUEST['Filter'])) {
 
-	$query = "SELECT * FROM Inventory";
+	if ($_REQUEST['Filter'] == 'All'){
+
+		$query = "SELECT * FROM Inventory ";
+	}
+	else{
+		$CatOption = $_REQUEST['Filter'];
+		$query = "SELECT * FROM Inventory WHERE category = '$CatOption'";
+	}
+
+	$result	= $mysqli->query($query);
+	if (!$result) {
+		die ("Database access failed: " . $mysqli->error);
+	}
+
+	$row = $result->num_rows;
+	$RowInt = intval($row);
+		echo "<br><br>
+	<div>
+	<table>
+		<tr> 
+		<th>ID</th>
+		<th>Video Name</th>
+		<th>Category</th>
+		<th>Length</th>
+		<th>Availablity</th>";
+	
+	for($m = $RowInt-1 ; $m >= 0 ; $m--)
+	{
+		echo "<tr>";
+		$result ->data_seek($m);
+		$row = $result->fetch_array(MYSQLI_NUM);
+		for($k = 0 ; $k < 5 ; $k++)
+		{
+			if($k === 4){
+				if($row[$k] === '0'){
+					echo "<td>Available</td>";
+				}else
+					echo "<td>Rented</td>";
+			}
+			else
+				echo "<td>$row[$k]</td>";
+		}
+		echo "
+		<td>
+			<form action = 'videos.php' method = 'POST'>
+				<input type='hidden' name = 'delete' value = 'yes'>
+				<input type='hidden' name = 'id' value='$row[0]'>
+				<input type='submit' value='Delete Video' >
+			</form>
+		</td>" ;
+		echo "
+		<td>
+			<form action = 'videos.php' method = 'POST'>
+				<input type='hidden' name = 'switch' value = 'yes'>
+				<input type='hidden' name = 'id' value='$row[0]'>
+			<input type='submit' value='checkin / checkout' >
+			</form>
+		</td>" ;
+		echo "</tr>";
+
+	}
+	echo "
+	</table>
+	</div>";
+
+
+
+/*
+	$query = "SELECT * FROM Inventory ";
 	$result	= $mysqli->query($query);
 	if (!$result) {
 		die ("Database access failed: " . $mysqli->error);
@@ -160,7 +255,7 @@ if (isset($_REQUEST['Filter'])){
 	}
 	echo "
 	</table>
-	</div>";
+	</div>";*/
 	
 	$result->close();
 	$mysqli->close();
