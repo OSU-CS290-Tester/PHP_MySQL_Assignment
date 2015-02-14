@@ -51,17 +51,20 @@ if ( (isset($_POST['name'])) && ($_POST['name'] != null) ){
 } else if (!isset($_POST['name']) || ($_POST['name'] === null) || ($_POST['name'] === "") ){
 	echo "Invalid Entry Please Enter a Video Name!";
 }
-echo "<fieldset>
-<legend>Add Videos</legend>
-<form action = 'videos.php' method = 'POST'><pre>
- Video Name : <input type = 'text' name = 'name' > <br> 
- <br> 
- Video Category : <input type = 'text' name = 'category' > <br> 
- <br> 
- Length in minutes : <input type = 'text' name = 'length' size = '20' > <br> 
- <br> 
- <input type ='submit' value ='Add Video' >
-</pre></form>
+echo "
+<fieldset>
+	<legend>Add Videos</legend>
+	<form action = 'videos.php' method = 'POST'>
+		<pre>
+		 Video Name : <input type = 'text' name = 'name' > <br> 
+		 <br> 
+		 Video Category : <input type = 'text' name = 'category' > <br> 
+		 <br> 
+		 Length in minutes : <input type = 'text' name = 'length' size = '20' > <br> 
+		 <br> 
+		 <input type ='submit' value ='Add Video' >
+		</pre>
+	</form>
 </fieldset>";
 
 	$query = "SELECT * FROM Inventory";
@@ -72,10 +75,20 @@ echo "<fieldset>
 
 	$row = $result->num_rows;
 
-	echo "<br><br><table><tr> <th>ID</th><th>Video Name</th><th>Category</th><th>Length</th><th>Availablity</th>";
+	$RowInt = intval($row);
+
+	echo "<br><br>
+	<div>
+	<table>
+		<tr> 
+		<th>ID</th>
+		<th>Video Name</th>
+		<th>Category</th>
+		<th>Length</th>
+		<th>Availablity</th>";
 
 
-	for($j = 0 ; $j < $row ; $j++)
+	for($j = $RowInt-1 ; $j >= 0 ; $j--)
 	{
 
 		$result ->data_seek($j);
@@ -104,16 +117,18 @@ echo "<fieldset>
 		</td>" ;
 		echo "
 		<td>
-		<form action = 'videos.php' method = 'POST'>
-		<input type='hidden' name = 'switch' value = 'yes'>
-		<input type='hidden' name = 'id' value='$row[0]'>
-		<input type='submit' value='checkin / checkout' >
-		</form>
+			<form action = 'videos.php' method = 'POST'>
+				<input type='hidden' name = 'switch' value = 'yes'>
+				<input type='hidden' name = 'id' value='$row[0]'>
+			<input type='submit' value='checkin / checkout' >
+			</form>
 		</td>" ;
 		echo "</tr>";
 
 	}
-	echo "</table>";
+	echo "
+	</table>
+	</div>";
 
 	$result->close();
 	$mysqli->close();
