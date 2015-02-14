@@ -8,7 +8,7 @@ $mysqli = new mysqli("oniddb.cws.oregonstate.edu", "thalijw-db" , $password , "t
 if ($mysqli->connect_errno) {
 	echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error; 
 } else {
-	echo "Connection is seccussful<br>";
+	echo "Connection is seccussful<br><br>";
 	}
 
 if (isset($_POST['delete']) && isset($_POST['id'])){
@@ -30,7 +30,6 @@ if (isset($_POST['switch']) && isset($_POST['id'])){
 	$row = $result->num_rows;
 	$result ->data_seek(0);
 	$row = $result->fetch_array(MYSQLI_NUM);
-	echo "$row[0]" . "  <br>" ;
 	if ($row[0] === '0'){
 
 		$query = "UPDATE Inventory SET rented = TRUE WHERE id='$id'" ;
@@ -46,7 +45,7 @@ if (isset($_POST['switch']) && isset($_POST['id'])){
 	}
 }
 
-if ( (isset($_POST['name'])) && ($_POST['name'] != null) ){
+if ( (isset($_POST['name'])) && ($_POST['name'] != null)){
 
 	$Name = get_post($mysqli , 'name');
 
@@ -65,7 +64,7 @@ if ( (isset($_POST['name'])) && ($_POST['name'] != null) ){
 	if (!$result) {
 		"Insert failed: " . $mysqli->error . "<br><br>";
 	}
-} else if (!isset($_POST['name']) || ($_POST['name'] === null) || ($_POST['name'] === "") ){
+} else if (!isset($_POST['name']) && ( (isset($_POST['category'])) || (isset($_POST['length'])) ) ){
 	echo "Invalid Entry Please Enter a Video Name!";
 }
 echo "
